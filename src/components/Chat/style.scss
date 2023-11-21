@@ -2,7 +2,7 @@
     height: 100vh;
     display: flex;
     justify-content: space-around;
-    flex:1;
+    flex: 1;
 
     // background: blue;
     .chat-area {
@@ -16,6 +16,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+
             .info {
                 background: #fff;
                 padding: 5px;
@@ -64,9 +65,8 @@
             overflow-y: auto;
             height: calc(100vh - 100px);
             background: rgba(255, 255, 255, 0.692);
-            // background-image: url('https://images.unsplash.com/photo-1615234337098-25fe4746c19f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDgyfGlVSXNuVnRqQjBZfHxlbnwwfHx8fHw%3D');
-            background-repeat: no-repeat;
-            background-size: cover;
+
+
 
             .message-container {
                 display: flex;
@@ -176,18 +176,6 @@
                         font-size: 2em;
                     }
 
-                    .heart {
-                        color: red;
-                    }
-
-                    .smile {
-                        color: #fdb500;
-                    }
-
-                    .like {
-                        color: #0095f6;
-
-                    }
 
                 }
 
@@ -203,6 +191,7 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
+
         .profile {
             display: flex;
             flex-direction: column;
@@ -267,6 +256,7 @@
             flex-direction: column;
             gap: 10px;
             padding: 0 20px;
+
             .member {
                 display: flex;
                 align-items: center;
@@ -277,12 +267,13 @@
                     height: 35px;
                     border-radius: 50%;
                     border: 1px solid rgba(0, 0, 0, 0.100);
-                
+
                 }
 
                 .member_info {
                     padding: 0;
                     text-align: left;
+
                     .name {
                         font-size: 0.9rem;
                         margin: 0;
@@ -296,7 +287,7 @@
                     }
                 }
 
-                
+
             }
 
         }
@@ -395,7 +386,7 @@
         padding: 20px;
         gap: 30px;
         justify-content: center;
-        
+
         // justify-content: space-around;
         // background: red;
         .card {
@@ -444,9 +435,11 @@
 
     .detail {
         text-align: left;
+
         .heading {
             font-size: 1.1rem;
         }
+
         .content {
             font-size: 0.8rem;
             font-style: italic;
@@ -458,9 +451,165 @@
         i {
             cursor: pointer;
             font-size: 1.2rem;
+
             &:hover {
                 color: #f62900;
             }
         }
+    }
+}
+
+
+
+
+.wallpaper-1,
+.wallpaper-2,
+.wallpaper-3,
+.wallpaper-4,
+.wallpaper-5 {
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+
+
+
+    .no-message {
+        color: white !important;
+    }
+
+    .message-detail {
+        .sending-status {
+            color: white !important;
+        }
+
+        .time-and-status {
+
+            .time {
+                color: white !important;
+            }
+        }
+    }
+}
+
+
+.no-wallpaper-item {
+    border: 1px solid rgba(0, 0, 0, 0.24);
+    display: grid;
+    place-content: center;
+    font-weight: bold;
+}
+
+
+
+.wallpaper-1 {
+    background-image: url('https://images.unsplash.com/photo-1700300325756-20ec2d287dd7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDExfGJvOGpRS1RhRTBZfHxlbnwwfHx8fHw%3D') !important;
+}
+
+
+.wallpaper-2 {
+    background-image: url('https://images.unsplash.com/photo-1700254783347-7b91d9bfad89?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDEyfGJvOGpRS1RhRTBZfHxlbnwwfHx8fHw%3D') !important;
+}
+
+.wallpaper-3 {
+    background-image: url('https://images.unsplash.com/photo-1610296669228-602fa827fc1f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8c3BhY2V8ZW58MHwwfDB8fHww') !important;
+}
+
+.wallpaper-4 {
+    background-image: url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8Y2FyfGVufDB8MHwwfHx8MA%3D%3D') !important;
+}
+
+
+.wallpaper-5 {
+    background-image: url('https://images.unsplash.com/photo-1531747056595-07f6cbbe10ad?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fGxvdmV8ZW58MHwwfDB8fHww') !important;
+}
+
+
+.ChooseChatColorModal,
+.ChooseWallpaperModal,
+.ChooseDefaultReactionModal {
+    display: flex;
+    flex-direction: column;
+    // align-items: center;
+    gap: 20px;
+
+    .title {
+        text-align: center;
+        // justify-self: center
+        font-size: 1.5em;
+    }
+
+    .grid-container {
+        display: grid;
+        // 4 columns
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 10px;
+        place-content: center;
+
+        .chat-color {
+            align-self: center;
+            justify-self: center;
+            height: 75px;
+            width: 75px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+
+            &:hover {
+                transform: scale(1.1);
+            }
+        }
+    }
+
+}
+
+
+.ChooseWallpaperModal {
+    width: 700px;
+    height: fit-content;
+    padding: 20px;
+
+    .grid-container {
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+        place-content: center;
+
+        .wallpaper {
+            height: 150px;
+            width: 200px;
+            border-radius: 10px;
+            align-self: center;
+            justify-self: center;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+
+            &:hover {
+                transform: scale(1.1);
+            }
+        }
+    }
+}
+
+.ChooseDefaultReactionModal {
+    // width: 700px;
+    height: fit-content;
+    padding: 20px;
+    gap: 30px;
+    // min-height: 400px;
+    .grid-container {
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+        place-content: center;
+
+        .default-reaction {
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            i {
+                font-size: 3.5em;
+            }
+
+            &:hover {
+                transform: scale(1.1);
+            }
+        }
+
     }
 }

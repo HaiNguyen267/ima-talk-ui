@@ -87,8 +87,9 @@ function getHideTimeStyle(message, nextMessage) {
 
 
 
-export default function ({ isMe, message, sender, previousMessage, nextMessage, isSent, isSeen, seenAvatar, repliedMessage }) {
+export default function ({ isMe, message, sender, previousMessage, nextMessage, isSent, isSeen, seenAvatar, repliedMessage, colorThemeStyle }) {
 
+    console.log("colorThemeStyle: ", colorThemeStyle);
     let style = ''
 
     style += isMe ? " right" : " left"
@@ -97,27 +98,48 @@ export default function ({ isMe, message, sender, previousMessage, nextMessage, 
     style += getMarginTopStyle(message, previousMessage);
 
     const formattedTime = formatTime(message.createdAt);
-    const { setRepliedMessageId, inputBoxRef } = React.useContext(ReplyMessageContext);
+    const { setRepliedMessage, inputBoxRef } = React.useContext(ReplyMessageContext);
 
 
     const handleReplyClick = () => {
-        setRepliedMessageId(message.id);
+        console.log("handleReplyClick", message);
+        setRepliedMessage({
+            id: message.id,
+            senderName: sender.displayName,
+            messageType: "TEXT",
+            messageContent: message.content
+        });
         inputBoxRef.current.focus();
     }
 
     return (
-        <div className={`Message ${style}`} title={formattedTime}>
+        <div className={`Message ${style} `} title={formattedTime}>
             <div className="avatar">
                 <p className="display-name">{sender.displayName}</p>
                 <img src={sender.avatar} alt="" />
             </div>
             <div className="message-detail">
                 <ReplyTo repliedMessage={repliedMessage} />
-                <MessageComponent message={{ content: message.content }} />
-                <div className="time-and-status">
-                    <div className="time">{formattedTime}</div>
-                    {<MessageStatus isMe={isMe} seenAvatar={seenAvatar} isSent={isSent} isSeen={isSeen} />}
-                </div>
+                <MessageComponent
+                    messageType={message.messageType}
+                    messageContent={message.content}
+                    colorThemeStyle={isMe ? colorThemeStyle : ''}
+                />
+                {
+                    message.status == 'sending' && <div className="sending-status">Sending...</div>
+                }
+
+                {
+                    formattedTime && <div className="time-and-status">
+                        <div className="time">{formattedTime}</div>
+                        {<MessageStatus isMe={isMe} seenAvatar={seenAvatar} isSent={isSent} isSeen={isSeen} />}
+                    </div>
+
+
+                }
+
+
+
 
             </div>
             {
@@ -129,13 +151,25 @@ export default function ({ isMe, message, sender, previousMessage, nextMessage, 
     )
 }
 
-function MessageComponent({ message }) {
-    const contentWithNewLines = message.content.split('\n').map((line, index) => (
+function MessageComponent({ messageType, messageContent, colorThemeStyle }) {
+    console.log("messageType", messageType);
+    if (messageType == 'DEFAULT_REACTION') {
+        console.log("WOWOWOW");
+        return <div className={`message-default-reaction`}>
+            {messageContent == "LIKE" ? <i class="fa-solid fa-thumbs-up like"></i>
+            : messageContent == "LOVE" ? <i class="fa-solid fa-heart heart"></i>
+            : messageContent == "HAHA" ? <i class="fa-solid fa-face-smile smile"></i>
+            : null
+            }   
+        </div>;
+    }
+
+    const contentWithNewLines = messageContent.split('\n').map((line, index) => (
         <React.Fragment key={index}>
             {line}
             <br />
         </React.Fragment>
     ));
 
-    return <div className="message-text">{contentWithNewLines}</div>;
+    return <div className={`message-text ${colorThemeStyle}`}>{contentWithNewLines}</div>;
 }

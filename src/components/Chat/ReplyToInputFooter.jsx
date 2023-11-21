@@ -6,7 +6,10 @@ import { truncateString } from "../../utils/Utils";
 
 export default function ({ senderName, messageContent }) {
 
-    const { setRepliedMessageId } = React.useContext(ReplyMessageContext);
+    console.log("senderName", senderName);
+    console.log("messageContent", messageContent);
+
+    const { setRepliedMessage } = React.useContext(ReplyMessageContext);
     const truncatedUserName = truncateString(senderName, 10);
     const truncatedMessage = truncateString(messageContent, 20);
     return (
@@ -17,7 +20,7 @@ export default function ({ senderName, messageContent }) {
                 </div>
                 <div className="content">{truncatedMessage}</div>
             </div>
-            <div className="close-btn" onClick={() => setRepliedMessageId(null)}>
+            <div className="close-btn" onClick={() => setRepliedMessage(null)}>
                 <i class="fa-solid fa-circle-xmark"></i>
             </div>
 

@@ -37,6 +37,19 @@
   display: none;
 }
 
+.heart {
+  color: red !important;
+}
+
+.smile {
+  color: #fdb500;
+}
+
+.like {
+  color: #0095f6;
+
+}
+
 
 @keyframes App-logo-spin {
   from {

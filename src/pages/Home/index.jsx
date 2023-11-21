@@ -90,7 +90,7 @@ export default function () {
             stompJsClient.current.subscribe(`/topic/user/${user.id}`, onReceivedMessage);
 
 
-            
+
             // send a message to that user to notify that the user is online
             // stompJsClient.current.send("/app/user/online", {}, JSON.stringify({ id: user.id }));
         }
@@ -115,6 +115,8 @@ export default function () {
             if (newMessage.conversationId == activeConversationId.current) {
                 // update the chat box when user is opening the conversation
                 updateChatbox(newMessage)
+
+                // 
             }
 
             // update the sidebar
@@ -325,7 +327,7 @@ export default function () {
             }
         }
 
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/notification/see-all-notifications`,{}, header);
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/notification/see-all-notifications`, {}, header);
         if (response.data.status === 200) {
             // setNotificationList(prev => {
             //     return prev.map(notification => {
@@ -334,11 +336,20 @@ export default function () {
             //             unread: false
             //         }
             //     })
-            
+
             // })
         }
-        
+
     }
+
+    const addNewMessage = (message) => {
+        // update the chatbox
+        updateChatbox(message);
+
+        // update the sidebar
+        updateSidebar(message);
+    }
+
 
     return (
         <ModalContext.Provider value={{ setShowModal, setModalChildren }}>
@@ -358,7 +369,11 @@ export default function () {
                         handleSeeAllNotifications={handleSeeAllNotifications}
                     // loading={loadingSidebar}
                     />
-                    <Chat chatbox={chatbox} />
+                    <Chat
+                        chatbox={chatbox}
+                        addNewMessage={addNewMessage}
+                        setChatbox={setChatbox}
+                    />
                     <ModalContainer
                         showModal={showModal}
                         children={<UserProfileModal />}

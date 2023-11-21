@@ -1,119 +1,167 @@
 version: "3.3"
 services:
   mysql:
-    image: mysql 
+    image: mysql
     container_name: mysql
-    # ports:
-    #   - "3306:3306"
+    ports:
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: my_password
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pmy_password"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 30s
       timeout: 10s
       retries: 5
-  mongo_db:
-    image: mongo
-    container_name: mongodb
-    ports:
-      - "2701:27017"
-    volumes:
-      - mongodb_data:/data/db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: my_password
-    # healthcheck:
-    #   # test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet 1
-    #   test: ["CMD", "mongo", "--eval", "db.runCommand('ping').ok"]
-    #   interval: 60s
-    #   timeout: 10s
-    #   retries: 10
+
   frontend:
-    image: hainguyen267/ima-talk-fe:0.4
+    image: hainguyen267/ima-talk-fe:0.5
     ports:
-      - "3001:3000"
+      - "80:3000"
     environment:
-      # - REACT_APP_BACKEND_URL=http://35.220.137.31:8080
-      - REACT_APP_BACKEND_URL=http://localhost:8081
-  backend:
-    image: hainguyen267/ima-talk-be:0.43
+      # - REACT_APP_BACKEND_URL=http://localhost:8080
+      # - REACT_APP_BACKEND_WEBSOCKET_URL=http://localhost:8100
+      - REACT_APP_BACKEND_URL=http://35.247.189.43:8080
+      - REACT_APP_BACKEND_WEBSOCKET_URL=http://35.247.189.43:8100
+
+  registry-service:
+    image: hainguyen267/ima-talk-registry-service:0.5
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--spider",
+          "-S",
+          "http://localhost:8761/actuator/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    environment:
+      - eureka.instance.hostname=host.docker.internal
+
+  api-gateway:
+    image: hainguyen267/ima-talk-api-gateway:0.51
+    # restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      - eureka.client.service-url.defaultZone=http://registry-service:8761/eureka/
+    depends_on:
+      registry-service:
+        condition: service_healthy
+
+  auth-service:
+    image: hainguyen267/ima-talk-auth-service:0.5
     restart: on-failure
     ports:
-      - "8081:8080"
+      - "8101:8101"
     environment:
-      - mysql_database=ima_talk
-      - mysql_user=root
-      - mysql_password=my_password
-      - mysql_host=mysql
-      - mongo_host=mongo_db
-      - mongo_port=27017
-      - mongo_username=root
-      - mongo_password=my_password
-      - mongo_database=ima-talk
-      - FRONT_END_URL=http://localhost:3001
+      - eureka.client.service-url.defaultZone=http://registry-service:8761/eureka/
+      # - spring.kafka.bootstrap-servers=35.247.189.43:9092
+      - spring.kafka.bootstrap-servers=34.128.67.66:9092
     depends_on:
+      registry-service:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--spider",
+          "-S",
+          "http://localhost:8101/api/auth/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  chat-service:
+    image: hainguyen267/ima-talk-chat-service:0.51
+    restart: on-failure
+    ports:
+      - "8102:8102"
+    environment:
+      - eureka.client.service-url.defaultZone=http://registry-service:8761/eureka/
+      - server.port=8102
+      # - spring.kafka.bootstrap-servers=35.247.189.43:9092
+      - spring.kafka.bootstrap-servers=34.128.67.66:9092
+    depends_on:
+      registry-service:
+        condition: service_healthy
+       
+  notification-service:
+    image: hainguyen267/ima-talk-notification-service:0.5
+    restart: on-failure
+    ports:
+      - "8103:8103"
+    environment:
+      - eureka.client.service-url.defaultZone=http://registry-service:8761/eureka/
+      - server.port=8103
+      # - spring.kafka.bootstrap-servers=35.247.189.43:9092
+      - spring.kafka.bootstrap-servers=34.128.67.66:9092
+    depends_on:
+      registry-service:
+        condition: service_healthy
+       
+  search-service:
+    image: hainguyen267/ima-talk-search-service:0.5
+    restart: on-failure
+    ports:
+      - "8105:8105"
+    environment:
+      - eureka.client.service-url.defaultZone=http://registry-service:8761/eureka/
+      - server.port=8105
+      # - spring.kafka.bootstrap-servers=35.247.189.43:9092
+      - spring.kafka.bootstrap-servers=34.128.67.66:9092
+      - mysql_database=ima-talk
+      - mysql_username=root
+      - mysql_host=mysql
+      - mysql_password=my_password
+    depends_on:
+      registry-service:
+        condition: service_healthy
       mysql:
         condition: service_healthy
-      # mongodb:
-      #   condition: service_healthy
-      # mongodb:
-      #   condition: service_healthy
-  # elasticsearch:
-  #   image: elasticsearch:7.17.9
-  #   container_name: elasticsearch
-  #   ports:
-  #     - "9200:9200"
-  #   environment:
-  #     - discovery.type=single-node
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:9200"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 5
-  # zoo1:
-  #   image: confluentinc/cp-zookeeper:7.3.2
-  #   hostname: zoo1
-  #   container_name: zoo1
-  #   ports:
-  #     - "2181:2181"
-  #   environment:
-  #     ZOOKEEPER_CLIENT_PORT: 2181
-  #     ZOOKEEPER_SERVER_ID: 1
-  #     ZOOKEEPER_SERVERS: zoo1:2888:3888
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "zkServer.sh status"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 5
-  # kafka1:
-  #   image: confluentinc/cp-kafka:7.3.2
-  #   hostname: kafka1
-  #   container_name: kafka1
-  #   ports:
-  #     - "9092:9092"
-  #     - "29092:29092"
-  #     - "9999:9999"
-  #   environment:
-  #     KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka1:19092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092,DOCKER://host.docker.internal:29092
-  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
-  #     KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-  #     KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181"
-  #     KAFKA_BROKER_ID: 1
-  #     KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
-  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-  #     KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-  #     KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-  #     KAFKA_JMX_PORT: 9999
-  #     KAFKA_JMX_HOSTNAME: ${DOCKER_HOST_IP:-127.0.0.1}
-  #     KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
-  #     KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
-  #   depends_on:
-  #     zoo1:
-  #       condition: service_healthy
+  user-service:
+    image: hainguyen267/ima-talk-user-service:0.51
+    restart: on-failure
+    ports:
+      - "8104:8104"
+    environment:
+      - eureka.client.service-url.defaultZone=http://registry-service:8761/eureka/
+      - server.port=8104
+      # - spring.kafka.bootstrap-servers=35.247.189.43:9092
+      - spring.kafka.bootstrap-servers=34.128.67.66:9092
+      - mysql_database=ima-talk
+      - mysql_username=root
+      - mysql_host=mysql
+      - mysql_password=my_password
+    depends_on:
+      registry-service:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+  ws-handler-service:
+    image: hainguyen267/ima-talk-ws-handler-service:0.5
+    restart: on-failure
+    ports:
+      - "8100:8100"
+    environment:
+      - eureka.client.service-url.defaultZone=http://registry-service:8761/eureka/
+      - server.port=8100
+      # - spring.kafka.bootstrap-servers=35.247.189.43:9092
+      - spring.kafka.bootstrap-servers=34.128.67.66:9092
+      # - FRONT_END_URL=http://35.247.189.43
+      - FRONT_END_URL=http://imatalk.online
+      # - FRONT_END_URL=http://localhost
+    depends_on:
+      registry-service:
+        condition: service_healthy
+       
 volumes:
   mysql_data:
-  mongodb_data:
-
-

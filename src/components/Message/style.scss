@@ -6,6 +6,7 @@
     text-align: left;
     cursor: pointer;
     padding-top: 30px;
+
     // background: red;
     .avatar {
         position: relative;
@@ -36,7 +37,8 @@
     .message-detail {
         display: flex;
         flex-direction: column;
-
+        position: relative;
+        
         .message-text {
             padding: 10px;
             border-radius: 10px;
@@ -46,15 +48,41 @@
             font-size: 0.9em;
         }
 
+        .message-default-reaction {
+            i {
+                font-size: 3em;
+                margin-right: 5px;
+            }
 
+            .heart {
+                color: red;
+            }
+            
+            .smile {
+                color: #fdb500;
+            }
+            
+            .like {
+                color: #0095f6;
+            
+            }
+        }
+
+        .sending-status {
+            position: absolute;
+            bottom: -15px;
+            right: 0px;
+            font-size: 0.75rem;
+        }
 
         .time-and-status {
+            margin-top: 2px;
             display: flex;
             flex-direction: flex;
             justify-content: flex-end;
             align-items: center;
-            gap: 10px;
-
+            // gap: 10px;
+            text-align: right;
             // background: red;
             .time {
                 font-size: 0.8rem;
@@ -63,6 +91,8 @@
 
 
         }
+
+
 
 
 
@@ -115,8 +145,14 @@
     align-self: flex-end;
 
     .message-text {
-        background: #0095f6 !important;
-        // background: #c100f6;
+        // background: #0095f6 !important;
+        // background: #f76116 !important;
+        // background: #7752FE !important;
+        // background: #DA0C81 !important;
+        // background: #D80032 !important;
+        // background: #008170 !important;
+        // background: #352F44 !important;
+        // background-image: linear-gradient(36deg, #A100FFFF, #119CFDFF) !important; // background: #c100f6;
 
         color: white;
     }
@@ -128,10 +164,15 @@
     .ReplyTo {
         align-self: flex-end;
     }
+
+    // .chat-color-5 .message-text{
+    //     background: #d8a200 !important;
+    // }
 }
 
 .hide-avatar {
     padding-top: 0;
+
     .avatar {
 
         img {
@@ -172,6 +213,7 @@
 
 .Status {
     text-align: right;
+
     img {
         margin: 2px;
         height: 15px;
@@ -181,14 +223,14 @@
     }
 }
 
-.ReplyTo{
+.ReplyTo {
     margin-top: 5px;
     background: #e7e6e6;
     padding: 7px 10px;
     border-radius: 5px;
     border-left: 3px solid black;
     max-width: 250px;
-    
+
     p {
         margin: 0;
     }
@@ -205,4 +247,41 @@
         color: #666;
     }
 
+}
+
+
+
+.chat-color-1 {
+    background: #0095f6 !important;
+
+}
+
+.chat-color-2 {
+    background: #f76116 !important;
+}
+
+.chat-color-3 {
+    background: #7752FE !important;
+}
+
+.chat-color-4 {
+    background: #DA0C81 !important;
+}
+
+.chat-color-5 {
+    background: #d8a200 !important;
+
+}
+
+.chat-color-6 {
+    background: #008170 !important;
+}
+
+.chat-color-7 {
+    background: #352F44 !important;
+}
+
+.chat-color-8 {
+    background: linear-gradient(36deg, #A100FFFF, #119CFDFF) !important;
+    // You may want to include a fallback background color here in case gradients are not supported
 }
